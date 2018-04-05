@@ -6,88 +6,33 @@
           android:verticalGap="0px">
     <Row
         android:verticalGap="10dp">
-        <Key
-            android:codes="49"
-            android:keyEdgeFlags="left"
-            android:keyLabel="1"/>
-        <Key
-            android:codes="50"
-            android:horizontalGap="2.5%p"
-            android:keyLabel="2"/>
-        <Key
-            android:codes="51"
-            android:horizontalGap="2.5%p"
-            android:keyLabel="3"/>
-        <Key
-            android:codes="-5"
-            android:horizontalGap="2.5%p"
-            android:isRepeatable="true"
-            android:keyEdgeFlags="right"
-            android:keyIcon="@mipmap/delete"/>
+        <Key android:codes="49" android:keyEdgeFlags="left" android:keyLabel="1"/>
+        <Key android:codes="50" android:horizontalGap="2.5%p" android:keyLabel="2"/>
+        <Key android:codes="51" android:horizontalGap="2.5%p" android:keyLabel="3"/>
+        <Key android:codes="-5" android:horizontalGap="2.5%p" android:isRepeatable="true" android:keyEdgeFlags="right" android:keyIcon="@mipmap/delete"/>
     </Row>
 
     <Row
         android:verticalGap="10dp">
-        <Key
-            android:codes="52"
-            android:keyEdgeFlags="left"
-            android:keyLabel="4"/>
-        <Key
-            android:codes="53"
-            android:horizontalGap="2.5%p"
-            android:keyLabel="5"/>
-        <Key
-            android:codes="54"
-            android:horizontalGap="2.5%p"
-            android:keyLabel="6"/>
-        <Key
-            android:codes="-100"
-            android:horizontalGap="2.5%p"
-            android:keyEdgeFlags="right"
-            android:isRepeatable="true"
-            android:keyLabel="清空"/>
+        <Key android:codes="52" android:keyEdgeFlags="left" android:keyLabel="4"/>
+        <Key android:codes="53" android:horizontalGap="2.5%p" android:keyLabel="5"/>
+        <Key android:codes="54" android:horizontalGap="2.5%p" android:keyLabel="6"/>
+        <Key android:codes="-100" android:horizontalGap="2.5%p" android:keyEdgeFlags="right" android:isRepeatable="true" android:keyLabel="清空"/>
     </Row>
 
     <Row
         android:verticalGap="10dp">
-        <Key
-            android:codes="55"
-            android:keyEdgeFlags="left"
-            android:keyLabel="7"/>
-        <Key
-            android:codes="56"
-            android:horizontalGap="2.5%p"
-            android:keyLabel="8"/>
-        <Key
-            android:codes="57"
-            android:horizontalGap="2.5%p"
-            android:keyLabel="9"/>
-        <Key
-            android:codes="-3"
-            android:horizontalGap="2.5%p"
-            android:keyEdgeFlags="right"
-            android:keyLabel="隐藏"/>
+        <Key android:codes="55" android:keyEdgeFlags="left" android:keyLabel="7"/>
+        <Key android:codes="56" android:horizontalGap="2.5%p" android:keyLabel="8"/>
+        <Key android:codes="57" android:horizontalGap="2.5%p" android:keyLabel="9"/>
+        <Key android:codes="-3" android:horizontalGap="2.5%p" android:keyEdgeFlags="right" android:keyLabel="隐藏"/>
     </Row>
 
     <Row
         android:verticalGap="10dp">
-        <Key
-            android:codes="-2"
-            android:keyEdgeFlags="left"
-            android:keyLabel="ABC"/>
-        <Key
-            android:codes="48"
-            android:horizontalGap="2.5%p"
-            android:keyLabel="0"/>
-        <Key
-            android:codes="-101"
-            android:horizontalGap="2.5%p"
-            android:keyLabel="系统键"/>
-        <Key
-            android:codes="-102"
-            android:horizontalGap="2.5%p"
-            android:keyEdgeFlags="right"
-            android:keyLabel="搜索"/>
+        <Key android:codes="-2" android:keyEdgeFlags="left" android:keyLabel="ABC"/>
+        <Key android:codes="48" android:horizontalGap="2.5%p" android:keyLabel="0"/>
+        <Key android:codes="-101" android:horizontalGap="2.5%p" android:keyLabel="系统键"/>
+        <Key android:codes="-102" android:horizontalGap="2.5%p" android:keyEdgeFlags="right" android:keyLabel="搜索"/>
     </Row>
-
 </Keyboard>

@@ -7,6 +7,7 @@
     android:layout_alignParentBottom="true"
     android:focusable="true"
     android:focusableInTouchMode="true"
+    android:keyPreviewLayout="@layout/preview_layout"
     android:keyBackground="@color/color_999999"
     android:keyTextColor="@color/color_ffffff"
     android:keyTextSize="16sp"

@@ -12,6 +12,8 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
+import java.util.List;
+
 /**
  * @author guannan
  * @date 2018/4/3 11:04
@@ -32,6 +34,11 @@ public class CustomKeyBoard {
     //数字键盘布局
     private Keyboard mNumberKeyBoard;
     private Activity mActivity;
+    private Keyboard mCharacterKeyBoard;
+    //标记当前字母键盘的大小写切换
+    private boolean isChange;
+    //标记当前字母是否大小写
+    private boolean isUpper;
 
     public CustomKeyBoard(Activity activity, EditText editText) {
 
@@ -49,6 +56,8 @@ public class CustomKeyBoard {
 
         //数字键盘布局
         mNumberKeyBoard = new Keyboard(activity, R.xml.number);
+        //字母键盘
+        mCharacterKeyBoard = new Keyboard(activity, R.xml.character);
         mKeyboardView = (KeyboardView) activity.findViewById(R.id.keyboard_view);
         mKeyboardView.setKeyboard(mNumberKeyBoard);
         mKeyboardView.setEnabled(true);
@@ -107,6 +116,17 @@ public class CustomKeyBoard {
                 showSysKeyBoard();
             } else if (primaryCode == KEYCODE_SEARCH) {  //搜索
 
+            } else if (primaryCode == Keyboard.KEYCODE_MODE_CHANGE) { //切换数字字母键盘
+                if (!isChange) {
+                    isChange = true;
+                    mKeyboardView.setKeyboard(mCharacterKeyBoard);
+                } else {
+                    isChange = false;
+                    mKeyboardView.setKeyboard(mNumberKeyBoard);
+                }
+            } else if (primaryCode == Keyboard.KEYCODE_SHIFT) {       //大小写切换
+                changeKeysUpperOrLower();
+                mKeyboardView.setKeyboard(mCharacterKeyBoard);
             } else {
                 editable.insert(start, Character.toString((char) primaryCode));
             }
@@ -138,6 +158,39 @@ public class CustomKeyBoard {
 
         }
     };
+
+    /**
+     * 改变字母键盘大小写
+     */
+    private void changeKeysUpperOrLower() {
+
+        List<Keyboard.Key> keys = mCharacterKeyBoard.getKeys();
+        if (isUpper) {// 大写切换小写
+            isUpper = false;
+            for (Keyboard.Key key : keys) {
+                if (key.label != null && isword(key.label.toString())) {
+                    key.label = key.label.toString().toLowerCase();
+                    key.codes[0] += 32;
+                }
+            }
+        } else {// 小写切换大写
+            isUpper = true;
+            for (Keyboard.Key key : keys) {
+                if (key.label != null && isword(key.label.toString())) {
+                    key.label = key.label.toString().toUpperCase();
+                    key.codes[0] -= 32;
+                }
+            }
+        }
+    }
+
+    private boolean isword(String str) {
+        String wordstr = "abcdefghijklmnopqrstuvwxyz";
+        if (wordstr.indexOf(str.toLowerCase()) > -1) {
+            return true;
+        }
+        return false;
+    }
 
     /**
      * 显示自定义键盘

@@ -1,81 +1,114 @@
 package com.guannan.library;
 
-import android.app.Activity;
 import android.content.Context;
 import android.inputmethodservice.Keyboard;
 import android.inputmethodservice.KeyboardView;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextUtils;
+import android.util.AttributeSet;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.TranslateAnimation;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 
 import java.util.List;
 
 /**
  * @author guannan
- * @date 2018/4/3 11:04
+ * @date 2018/4/16 14:09
  */
 
-public class CustomKeyBoard {
+public class CustomKeyBoardView extends FrameLayout implements View.OnTouchListener {
 
+    private KeyboardView mKeyBoardView;
+    //绑定的相应编辑框
+    private EditText mEditText;
+    //数字键盘布局
+    private Keyboard mNumberKeyBoard;
+    //字母键盘布局
+    private Keyboard mCharacterKeyBoard;
     //清空
     public static final int KEYCODE_CLEAR = -100;
     //系统键盘
     public static final int KEYCODE_SYS = -101;
     //搜索
     public static final int KEYCODE_SEARCH = -102;
-    //当前编辑框
-    private EditText mEdtText;
-    //容纳KeyBoard的view
-    private KeyboardView mKeyboardView;
-    //数字键盘布局
-    private Keyboard mNumberKeyBoard;
-    private Activity mActivity;
-    private Keyboard mCharacterKeyBoard;
     //标记当前字母键盘的大小写切换
     private boolean isChange;
     //标记当前字母是否大小写
     private boolean isUpper;
+    private Context mContext;
 
-    public CustomKeyBoard(Activity activity, EditText editText) {
+    public CustomKeyBoardView(@NonNull Context context) {
+        this(context, null);
+    }
 
-        this.mActivity = activity;
-        this.mEdtText = editText;
-        initKeyBoard(activity);
+    public CustomKeyBoardView(@NonNull Context context, @Nullable AttributeSet attrs) {
+        this(context, attrs, 0);
+    }
+
+    public CustomKeyBoardView(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
+        this.mContext = context;
+        initKeyBoard();
     }
 
     /**
-     * 初始化键盘
+     * 绑定EditText
      *
-     * @param activity
+     * @param editText
      */
-    private void initKeyBoard(Activity activity) {
-
-        //数字键盘布局
-        mNumberKeyBoard = new Keyboard(activity, R.xml.number);
-        //字母键盘
-        mCharacterKeyBoard = new Keyboard(activity, R.xml.character);
-        mKeyboardView = (KeyboardView) activity.findViewById(R.id.keyboard_view);
-        mKeyboardView.setKeyboard(mNumberKeyBoard);
-        mKeyboardView.setEnabled(true);
-        mKeyboardView.setPreviewEnabled(true);
-        mKeyboardView.setOnKeyboardActionListener(keyboardListener);
-        mEdtText.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                showKeyBoard();
-                mEdtText.onTouchEvent(event);
-                //这里设置输入类型为文本类型是为了让EditText继续获取焦点
-                mEdtText.setInputType(InputType.TYPE_CLASS_TEXT);
-                return true;
-            }
-        });
+    public void bindEditText(EditText editText) {
+        this.mEditText = editText;
+        if(mEditText!=null){
+            mEditText.setOnTouchListener(this);
+        }
     }
 
+    private void initKeyBoard() {
+
+        LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        mKeyBoardView = (KeyboardView) inflater.inflate(R.layout.content_keyboard, null);
+        addView(mKeyBoardView);
+        //数字键盘布局
+        mNumberKeyBoard = new Keyboard(mContext, R.xml.number);
+        //字母键盘
+        mCharacterKeyBoard = new Keyboard(mContext, R.xml.character);
+        //设置当前显示的键盘样式
+        mKeyBoardView.setKeyboard(mNumberKeyBoard);
+        mKeyBoardView.setEnabled(true);
+        //设置显示类似toast样式的提示
+        mKeyBoardView.setPreviewEnabled(true);
+        //给按键设置监听
+        mKeyBoardView.setOnKeyboardActionListener(keyboardListener);
+        setKbvAnimation();
+    }
+
+    /**
+     * 给键盘设置动画
+     */
+    public void setKbvAnimation(){
+        TranslateAnimation animation = new TranslateAnimation(0, 0, mKeyBoardView.getKeyboard().getHeight(), 0);
+        animation.setDuration(300);
+        mKeyBoardView.startAnimation(animation);
+    }
+
+    /**
+     * 获取KeyboardView，拿到了KeyboardView对象就可以设置键盘背景，按键字体大小颜色以及预览框样式等
+     * @return
+     */
+    public KeyboardView getKeyBoardView(){
+        if(mKeyBoardView!=null){
+            return mKeyBoardView;
+        }
+        return null;
+    }
 
     KeyboardView.OnKeyboardActionListener keyboardListener = new KeyboardView.OnKeyboardActionListener() {
 
@@ -85,7 +118,7 @@ public class CustomKeyBoard {
          */
         @Override
         public void onPress(int primaryCode) {
-            mKeyboardView.setPreviewEnabled(primaryCode > 0);
+            mKeyBoardView.setPreviewEnabled(primaryCode > 0);
         }
 
         /**
@@ -103,31 +136,36 @@ public class CustomKeyBoard {
          */
         @Override
         public void onKey(int primaryCode, int[] keyCodes) {
-            int start = mEdtText.getSelectionStart();
-            Editable editable = mEdtText.getText();
+            if (mEditText == null) {
+                return;
+            }
+            int start = mEditText.getSelectionStart();
+            Editable editable = mEditText.getText();
             if (primaryCode == Keyboard.KEYCODE_DELETE) {   //回退删除
-                if (!TextUtils.isEmpty(mEdtText.getText())) {
+                if (!TextUtils.isEmpty(mEditText.getText())) {
                     editable.delete(editable.toString().length() - 1, editable.toString().length());
                 }
             } else if (primaryCode == KEYCODE_CLEAR) {  //清空
-                mEdtText.setText("");
+                mEditText.setText("");
             } else if (primaryCode == Keyboard.KEYCODE_CANCEL) {   //隐藏
-                hideKeyBoard(false);
+                hideAndShowSysKeyBoard(false);
             } else if (primaryCode == KEYCODE_SYS) {  //系统键盘
                 showSysKeyBoard();
             } else if (primaryCode == KEYCODE_SEARCH) {  //搜索
-
+                if (mSearchListener != null) {
+                    mSearchListener.onSearCh(primaryCode);
+                }
             } else if (primaryCode == Keyboard.KEYCODE_MODE_CHANGE) { //切换数字字母键盘
                 if (!isChange) {
                     isChange = true;
-                    mKeyboardView.setKeyboard(mCharacterKeyBoard);
+                    mKeyBoardView.setKeyboard(mCharacterKeyBoard);
                 } else {
                     isChange = false;
-                    mKeyboardView.setKeyboard(mNumberKeyBoard);
+                    mKeyBoardView.setKeyboard(mNumberKeyBoard);
                 }
             } else if (primaryCode == Keyboard.KEYCODE_SHIFT) {       //大小写切换
                 changeKeysUpperOrLower();
-                mKeyboardView.setKeyboard(mCharacterKeyBoard);
+                mKeyBoardView.setKeyboard(mCharacterKeyBoard);
             } else {
                 editable.insert(start, Character.toString((char) primaryCode));
             }
@@ -136,27 +174,22 @@ public class CustomKeyBoard {
         // 如果之前在keyOutputText定义过数值，则按键之后会在此回调中进行响应
         @Override
         public void onText(CharSequence text) {
-
         }
 
         @Override
         public void swipeLeft() {
-
         }
 
         @Override
         public void swipeRight() {
-
         }
 
         @Override
         public void swipeDown() {
-
         }
 
         @Override
         public void swipeUp() {
-
         }
     };
 
@@ -194,38 +227,23 @@ public class CustomKeyBoard {
     }
 
     /**
-     * 显示自定义键盘
-     */
-    public void showKeyBoard() {
-        mEdtText.setInputType(InputType.TYPE_NULL);     //这里设置EditText的输入类型为null是为了不让其调起系统键盘
-        hideInputMethod(mActivity, mEdtText);
-        if (mKeyboardView.getVisibility() == View.GONE || mKeyboardView.getVisibility() == View.INVISIBLE) {
-            mKeyboardView.setVisibility(View.VISIBLE);
-            TranslateAnimation animation = new TranslateAnimation(0, 0, mKeyboardView.getKeyboard().getHeight(),0);
-            animation.setDuration(300);
-            mKeyboardView.startAnimation(animation);
-        }
-    }
-
-    /**
      * 显示系统键盘
      */
     public void showSysKeyBoard() {
-//        mEdtText.setInputType(InputType.TYPE_CLASS_TEXT);
-        hideKeyBoard(true);
+        hideAndShowSysKeyBoard(true);
     }
 
     /**
-     * 隐藏自定义键盘显示系统键盘
+     * 隐藏自定义键盘,显示系统键盘
      *
      * @param showSys
      */
-    public void hideKeyBoard(boolean showSys) {
-        if (mKeyboardView.getVisibility() == View.VISIBLE) {
-            mKeyboardView.setVisibility(View.GONE);
+    public void hideAndShowSysKeyBoard(boolean showSys) {
+        if (mKeyBoardView.getVisibility() == View.VISIBLE) {
+            mKeyBoardView.setVisibility(View.GONE);
         }
         if (showSys) {
-            showSysKeyBoard(mActivity, mEdtText);
+            showSysKeyBoard(mContext, mEditText);
         }
     }
 
@@ -262,5 +280,41 @@ public class CustomKeyBoard {
         }
         return false;
     }
+
+    @Override
+    public boolean onTouch(View v, MotionEvent event) {
+        showKeyBoard();
+        mEditText.onTouchEvent(event);
+        //这里设置输入类型为文本类型是为了让EditText继续获取焦点
+        mEditText.setInputType(InputType.TYPE_CLASS_TEXT);
+        return true;
+    }
+
+    /**
+     * 显示自定义键盘
+     */
+    public void showKeyBoard() {
+        mEditText.setInputType(InputType.TYPE_NULL);     //这里设置EditText的输入类型为null是为了不让其调起系统键盘
+        hideInputMethod(mContext, mEditText);
+        if (mKeyBoardView.getVisibility() == View.GONE || mKeyBoardView.getVisibility() == View.INVISIBLE) {
+            mKeyBoardView.setVisibility(View.VISIBLE);
+            setKbvAnimation();
+        }
+    }
+
+    /**
+     * 自定义键盘上按键搜索的监听
+     */
+    public interface SearchListener {
+
+        void onSearCh(int primaryCode);
+    }
+
+    private SearchListener mSearchListener;
+
+    public void addSearchListener(SearchListener searchListener) {
+        this.mSearchListener = searchListener;
+    }
+
 
 }

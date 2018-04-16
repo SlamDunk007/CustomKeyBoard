@@ -1,3 +1,15 @@
+### 使用方法
+#### 在我们布局当中直接引入自定义CustomKeyBoardView即可
+```
+<com.guannan.library.CustomKeyBoardView
+        android:id="@+id/keyboard_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"/>
+```
+#### 我们拿到CustomKeyBoardView对象后可以获取KeyboardView的实例对象，然后可以设置键盘的背景颜色，按键的字体颜色和大小等等。如果对这些属性不熟悉，请拿出几分钟阅读一下下面内容。这里就不再一一介绍。
+
+## 具体的自定义过程
 ### 1.背景简介
 android自定义键盘的使用在一些金融类，银行类的产品当中特别常见，这是为了避免一些第三方的键盘非法的采集个人银行密码或者交易密码等。为此作为一个开发，我们应该会自己定制键盘，起初以为定制这样的键盘需要自己使用常用控件去一个一个布局，经过查阅资料发现，有更简单的做法，就是使用KeyboardView和Keyboard，了解了这两个类之后，自定一个漂亮好用的键盘简直不是事儿~~。先看下效果图：
 
@@ -120,7 +132,3 @@ android:keyPreviewLayout="@layout/preview_layout"
 ==***这里有一点需要注意：直接这样设置如果，显示的Toast样式如果直接这样，在显示字母键盘的时候，可能样式会变形，这个时候只需给TextView的background设置一个图片或者自定义的drawable即可解决这种问题==
 
 ##### 5）最后就是在我们的KeyboardView.OnKeyboardActionListener对各种primaryCode进行处理就可以了，这里就不再叙述，详见代码
-
-### 3.具体使用方法
-
-将content_keyboard样式include到我们需要的布局当中,然后再创建new CustomKeyBoard(this, editText);将EditText对象传入即可。

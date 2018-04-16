@@ -9,5 +9,11 @@
         android:layout_width="match_parent"
         android:layout_height="40dp"
         android:cursorVisible="true"/>
-    <include layout="@layout/content_keyboard"/>
+
+    <com.guannan.library.CustomKeyBoardView
+        android:id="@+id/keyboard_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"/>
+
 </RelativeLayout>

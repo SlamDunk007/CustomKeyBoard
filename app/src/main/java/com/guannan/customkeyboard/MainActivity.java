@@ -7,6 +7,8 @@ import android.text.InputType;
 import android.view.MotionEvent;
 import android.widget.EditText;
 
+import com.guannan.library.CustomKeyBoard;
+
 public class MainActivity extends AppCompatActivity {
 
     @Override

@@ -1,4 +1,4 @@
-package com.guannan.customkeyboard;
+package com.guannan.library;
 
 import android.app.Activity;
 import android.content.Context;
@@ -9,6 +9,7 @@ import android.text.InputType;
 import android.text.TextUtils;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.animation.TranslateAnimation;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
@@ -200,6 +201,9 @@ public class CustomKeyBoard {
         hideInputMethod(mActivity, mEdtText);
         if (mKeyboardView.getVisibility() == View.GONE || mKeyboardView.getVisibility() == View.INVISIBLE) {
             mKeyboardView.setVisibility(View.VISIBLE);
+            TranslateAnimation animation = new TranslateAnimation(0, 0, mKeyboardView.getKeyboard().getHeight(),0);
+            animation.setDuration(300);
+            mKeyboardView.startAnimation(animation);
         }
     }
 
